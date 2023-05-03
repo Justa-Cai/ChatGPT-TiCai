@@ -23,8 +23,8 @@ type PageMainData struct {
 func (that *PageMainData) Process() {
 	that.DrawDate = strings.ReplaceAll(that.DrawDate, "(", "")
 	that.DrawDate = strings.ReplaceAll(that.DrawDate, ")", "")
-	that.DrawNumber = strings.ReplaceAll(that.DrawNumber, "中国体育彩票福建36选7第", "")
-	that.DrawNumber = strings.ReplaceAll(that.DrawNumber, "中国体育彩票福建省36选7第", "")
+	that.DrawNumber = strings.ReplaceAll(that.DrawNumber, "中国体育彩票福建22选5第", "")
+	that.DrawNumber = strings.ReplaceAll(that.DrawNumber, "中国体育彩票福建省22选5第", "")
 	that.DrawNumber = strings.ReplaceAll(that.DrawNumber, "期开奖公告", "")
 	that.Link = "http://www.fjtc.com.cn/" + that.Link
 }

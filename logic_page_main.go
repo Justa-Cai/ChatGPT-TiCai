@@ -10,6 +10,7 @@ import (
 
 func ticai_page_main(strUrl string) []*PageMainData {
 	var data []*PageMainData
+	var main *PageMainData
 	// 创建一个新的Collector
 	c := colly.NewCollector()
 
@@ -18,7 +19,7 @@ func ticai_page_main(strUrl string) []*PageMainData {
 
 	// 在请求之前执行的操作
 	c.OnRequest(func(r *colly.Request) {
-		// r.Headers.Set("User-Agent", randomUserAgent())
+		r.Headers.Set("User-Agent", randomUserAgent())
 		// fmt.Println("Visiting", r.URL.String())
 	})
 
@@ -31,14 +32,15 @@ func ticai_page_main(strUrl string) []*PageMainData {
 	// 查找匹配的链接并访问它们
 	c.OnHTML("div.con", func(e *colly.HTMLElement) {
 		e.ForEach("li.clearfix", func(i int, e *colly.HTMLElement) {
-			var main *PageMainData = new(PageMainData)
+			main = new(PageMainData)
 			err := e.Unmarshal(main)
 			if err != nil {
 				log.Println(err.Error())
 				return
 			}
 			main.Process()
-			if main.GetDrawNumber() <= 18030 {
+			// log.Println(main.GetDrawNumber())
+			if main.GetDrawNumber() <= 18071 {
 				return
 			}
 
@@ -52,7 +54,10 @@ func ticai_page_main(strUrl string) []*PageMainData {
 	// bGetNext := false
 	c.OnHTML("body > main > article > div.fy > div > a", func(e *colly.HTMLElement) {
 		if strings.Index(e.Text, "下一页") != -1 {
-			g_mq.Add(MSG_PAGE_MAIN_GET, "http://www.fjtc.com.cn/36x7xq/"+e.Attr("href"), nil)
+			if main.GetDrawNumber() <= 18071 {
+				return
+			}
+			g_mq.Add(MSG_PAGE_MAIN_GET, "http://www.fjtc.com.cn/22x5xq/"+e.Attr("href"), nil)
 			// bGetNext = true
 			return
 		}
@@ -98,7 +103,7 @@ func page_main_data_process_msg(msg *Msg) {
 		// g_mq.wg.Wait()
 		// 保存到文件
 		log.Printf("save db...")
-		db_page_save("1.db")
+		db_page_save("22x5.db")
 		os.Exit(0)
 
 	case MSG_PAGE_MAIN_IDLE:

@@ -84,6 +84,7 @@ func msg_loop_init() {
 	for i := 0; i < g_poolSize; i++ {
 		go worker(i, g_mq.task, &g_mq.wg)
 	}
+	time.Sleep(time.Microsecond * 100)
 }
 
 func msg_loop_process(msg *Msg) {

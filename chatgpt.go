@@ -36,7 +36,7 @@ func chatgpt_call(strContent string) {
 		context.Background(),
 		openai.ChatCompletionRequest{
 			Model:       openai.GPT3Dot5Turbo,
-			Temperature: 0.8,
+			Temperature: 0.9,
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleSystem,

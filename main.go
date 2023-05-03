@@ -14,10 +14,10 @@ import (
 )
 
 func load_func(nOffset int) {
-	db_page_load("1.db")
+	db_page_load("22x5.db")
 	nTick := 0
 	var builder strings.Builder
-	builder.WriteString("扮演数学专家角色，规则从36个数据中选择7个号码，我按照\"[期数] 号码\"的格式,提供100组历史数据，如下：\n")
+	builder.WriteString("扮演数学专家角色，规则从1-22个数据中选择5个号码，我按照\"[期数] 号码\"的格式,提供100组历史数据，如下：\n")
 
 	for _, item := range g_PageMainData {
 		nOffset--
@@ -33,7 +33,7 @@ func load_func(nOffset int) {
 		}
 	}
 
-	builder.WriteString("请根据这些数据历史记录，输出新选择的5组数据，不要告诉我过程")
+	builder.WriteString("请根据这些数据历史记录，输出新选择的3组数据，不要告诉我过程")
 	ioutil.WriteFile("1.txt", []byte(builder.String()), 0777)
 	// os.Exit(0)
 }
@@ -113,7 +113,7 @@ func check_func(nOffset int) {
 			cs = append(cs, n)
 		}
 
-		if len(cs) != 7 {
+		if len(cs) != 5 {
 			continue
 		}
 
@@ -124,7 +124,7 @@ func check_func(nOffset int) {
 	// os.Exit(0)
 
 	// 加载历史数据
-	db_page_load("1.db")
+	db_page_load("22x5.db")
 	nTick := 0
 	var builder strings.Builder
 	builder.WriteString(fmt.Sprintf("测试 %d\n", nOffset))
@@ -144,7 +144,7 @@ func check_func(nOffset int) {
 			// item.Check()
 			_ = item
 			nSame := item.Check(cs)
-			if nSame >= 4 {
+			if nSame >= 3 {
 				strContent = fmt.Sprintf("期数:%s 相同数量:%d 选:%s 开奖:%s\n", item.DrawDate, nSame, convertToStringSlice(cs), convertToStringSlice(item.GetNumber()))
 				builder.WriteString(strContent)
 				fmt.Printf(strContent)
@@ -172,6 +172,10 @@ func main() {
 		// 计算下一期的匹配结果
 		check_func(100 + nTick)
 		nTick++
+
+		if nTick+100 >= len(g_PageMainData) {
+			break
+		}
 	}
 
 	os.Exit(0)
@@ -188,10 +192,8 @@ func main() {
 	msg_loop_init()
 	g_mq.Register(MSG_PAGE_MAIN_BASE, page_main_data_process_msg)
 	g_mq.Register(MSG_PAGE_DETAIL_BASE, page_main_detail_process_msg)
-	g_mq.Add(MSG_PAGE_MAIN_GET, "http://www.fjtc.com.cn/36x7xq/index.html", nil)
+	g_mq.Add(MSG_PAGE_MAIN_GET, "http://www.fjtc.com.cn/22x5xq/index.html", nil)
 	// var data PageMainData
-	// g_mq.Add(MSG_PAGE_DETAIL_GET, "http://www.fjtc.com.cn//36x7xq/442909.html", &data)
+	// g_mq.Add(MSG_PAGE_DETAIL_GET, "http://www.fjtc.com.cn//22x5xq/528519.html", &data)
 	msg_loop_run()
-
-	// writeCSV(data, "金山小.csv")
 }

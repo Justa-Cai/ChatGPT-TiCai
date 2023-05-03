@@ -60,6 +60,8 @@ func ticai_page_detail(strUrl string) string {
 	bFound := false
 	bBegin := false
 	strNumber := ""
+	_ = bBegin
+	_ = strNumber
 
 	c.OnHTML("span", func(e *colly.HTMLElement) {
 		// fmt.Println(e.Text)
@@ -68,28 +70,31 @@ func ticai_page_detail(strUrl string) string {
 			strNumber = e.Text
 			ret = ticai_page_detail_process_num(e.Text)
 			// log.Println(ret)
-			if len(ret) == 8 {
-				log.Println(ret)
-				bBegin = false
-				bFound = true
-			}
-		} else if bBegin {
-			// fmt.Println("SPAN:", e.Text)
-			if strings.Index(e.Text, "本期出球顺序") != -1 {
-				return
-			}
-			strNumber += " "
-			strNumber += e.Text
-			// fmt.Println("PROC:", strNumber)
-
-			ret = ticai_page_detail_process_num(strNumber)
-			if len(ret) >= 8 {
+			if len(ret) == 5 {
 				log.Println(ret)
 				bBegin = false
 				bFound = true
 			}
 		}
 	})
+
+	if bFound == false {
+		c.OnHTML("body > main > article > section.section3 > div:nth-child(3)", func(e *colly.HTMLElement) {
+			// fmt.Println(e.Text)
+			if strings.Index(e.Text, "本期开奖号码") != -1 {
+				bBegin = true
+				strNumber = e.Text
+				ret = ticai_page_detail_process_num(e.Text)
+				// log.Println(ret)
+				if len(ret) == 5 {
+					log.Println(ret)
+					bBegin = false
+					bFound = true
+				}
+			}
+		})
+	}
+
 	if bFound == false {
 		c.OnHTML("body > main > article > section.section3 > div:nth-child(4)", func(e *colly.HTMLElement) {
 			// fmt.Println(e.Text)
@@ -98,22 +103,7 @@ func ticai_page_detail(strUrl string) string {
 				strNumber = e.Text
 				ret = ticai_page_detail_process_num(e.Text)
 				// log.Println(ret)
-				if len(ret) == 8 {
-					log.Println(ret)
-					bBegin = false
-					bFound = true
-				}
-			} else if bBegin {
-				// fmt.Println("SPAN:", e.Text)
-				if strings.Index(e.Text, "本期出球顺序") != -1 {
-					return
-				}
-				strNumber += " "
-				strNumber += e.Text
-				// fmt.Println("PROC:", strNumber)
-
-				ret = ticai_page_detail_process_num(strNumber)
-				if len(ret) >= 8 {
+				if len(ret) == 5 {
 					log.Println(ret)
 					bBegin = false
 					bFound = true
@@ -130,22 +120,7 @@ func ticai_page_detail(strUrl string) string {
 				strNumber = e.Text
 				ret = ticai_page_detail_process_num(e.Text)
 				// log.Println(ret)
-				if len(ret) == 8 {
-					log.Println(ret)
-					bBegin = false
-					bFound = true
-				}
-			} else if bBegin {
-				// fmt.Println("SPAN:", e.Text)
-				if strings.Index(e.Text, "本期出球顺序") != -1 {
-					return
-				}
-				strNumber += " "
-				strNumber += e.Text
-				// fmt.Println("PROC:", strNumber)
-
-				ret = ticai_page_detail_process_num(strNumber)
-				if len(ret) >= 8 {
+				if len(ret) == 5 {
 					log.Println(ret)
 					bBegin = false
 					bFound = true
@@ -163,7 +138,7 @@ func ticai_page_detail(strUrl string) string {
 					continue
 				}
 				ret = ticai_page_detail_process_num(item)
-				if len(ret) == 8 {
+				if len(ret) == 5 {
 					log.Println(ret)
 					bBegin = false
 					bFound = true
@@ -180,6 +155,10 @@ func ticai_page_detail(strUrl string) string {
 		return ""
 	}
 
+	if len(ret) != 5 {
+		log.Printf("url: %s parse failed len:%d\n", strUrl, len(ret))
+	}
+
 	return strings.Join(ret, " ")
 }
 
@@ -189,6 +168,7 @@ func StringToHex(str string) {
 	}
 	fmt.Println()
 }
+
 func page_main_detail_process_msg(msg *Msg) {
 	switch msg.Id {
 	case MSG_PAGE_DETAIL_GET:

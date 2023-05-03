@@ -26,11 +26,9 @@ func db_page_save(strFile string) {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
 
-	db.Begin()
-	for _, item := range g_PageMainData {
-		db.Create(item)
-	}
-	db.Commit()
+	tx := db.Begin()
+	tx.Create(g_PageMainData)
+	tx.Commit()
 }
 
 func db_page_load(strFile string) {
